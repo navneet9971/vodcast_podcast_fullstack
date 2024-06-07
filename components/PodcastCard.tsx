@@ -24,6 +24,7 @@ const PodcastCard = ({
     <h2 className='text-12 truncate font-normal capitalize text-white-4'>{description}</h2>
   </div>
         </figure>
+        
         </div>
   )
 }
