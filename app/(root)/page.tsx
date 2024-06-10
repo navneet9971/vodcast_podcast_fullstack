@@ -13,15 +13,15 @@ import { api } from "@/convex/_generated/api";
 
 
 const Home = () => {
-  const tasks = useQuery(api.podcasts.getTrendingPodcasts);
+  // const tasks = useQuery(api.podcasts.getTrendingPodcasts);
   return (
     <div className='mt-9 flex flex-col gap-9'>
       <section className='flex flex-col gap-5'>
 
       <div className="flex min-h-screen flex-col items-center justify-between p-24 text-white-1">
-      {tasks?.map(({ _id, podcastTitle, podcastDescription, imageUrl }) => (
+      {/* {tasks?.map(({ _id, podcastTitle, podcastDescription, imageUrl }) => (
         <div key={_id}>{podcastTitle}</div>
-      ))}
+      ))} */}
     </div>
         <h1 className='text-20 font-bold text-white-1'>
           Trending Podcasts
