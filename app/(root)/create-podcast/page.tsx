@@ -179,11 +179,11 @@ const CreatePodcast = () => {
               />
 
               <GenerateThumbnail 
-              //  setImage={setImageUrl}
-              //  setImageStorageId={setImageStorageId}
-              //  image={imageUrl}
-              //  imagePrompt={imagePrompt}
-              //  setImagePrompt={setImagePrompt}
+               setImage={setImageUrl}
+               setImageStorageId={setImageStorageId}
+               image={imageUrl}
+               imagePrompt={imagePrompt}
+               setImagePrompt={setImagePrompt}
               />
 
               <div className="mt-10 w-full">
