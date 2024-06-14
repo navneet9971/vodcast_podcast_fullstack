@@ -8,6 +8,10 @@ import { GenerateThumbnailProps } from '@/types'
 import { Input } from './ui/input'
 import Image from 'next/image'
 import { useToast } from './ui/use-toast'
+import { useAction, useMutation } from 'convex/react'
+import { useUploadFiles } from '@xixixao/uploadstuff/react'
+import { api } from '@/convex/_generated/api'
+import {v4 as uuidv4} from 'uuid';
 
 const GenerateThumbnail = ({  setImage, setImageStorageId, image, 
   imagePrompt, setImagePrompt} : GenerateThumbnailProps) => {
@@ -16,12 +20,30 @@ const [isImageLoading, setIsImageLoading] = useState(false);
  const imageRef = useRef<HTMLInputElement>(null);
  const { toast } = useToast();
 
-const handleImage = async (blog: Blob, fileName: string) => {
+ const generateUploadUrl = useMutation(api.files.generateUploadUrl)
+ const { startUpload } = useUploadFiles(generateUploadUrl);
+ const getImageUrl = useMutation(api.podcasts.getUrl)
+
+ const handleGenerateThumbnail = useAction(api.openai.generateThumbnailAction)
+
+const handleImage = async (blob: Blob, fileName: string) => {
   setIsImageLoading(true)
   setImage('')
 
 try {
+  const file = new File([blob], fileName, { type: 'image/png' });
 
+  const uploaded = await startUpload([file]);
+  const storageId = (uploaded[0].response as any).storageId;
+
+  setImageStorageId(storageId)
+
+  const imageUrl = await getImageUrl( { storageId });
+  setImage(imageUrl!);
+  setIsImageLoading(false)
+  toast({
+    title: "Thumbnail generated successfully"
+  })
 } catch (error) {
   console.log(error)
   toast({ title: 'Error generating thumbnail', variant: 'destructive'})
@@ -29,8 +51,38 @@ try {
 
 
 }
-const generateImage = async () => {}
-const uploadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {}
+const generateImage = async () => {
+
+  try {
+
+    const response = await handleGenerateThumbnail({ prompt: imagePrompt});
+    const blob = new Blob([response], { type: 'image/png' });
+    handleImage(blob, `thumbnail${uuidv4()}`)
+
+  } catch (err) {
+console.error(err);
+toast({ title: 'Error generating thumbnail', variant: 'destructive'})
+  }
+}
+
+
+
+const uploadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  e.preventDefault();
+
+  try {
+   const files = e.target.files;
+   if(!files) return;
+   const file = files[0];
+   const blob = await file.arrayBuffer()
+   .then((ab) => new Blob([ab]));
+
+   handleImage(blob, file.name);
+  } catch (error) {
+    console.log(error)
+    toast({ title: 'Error uploading image', variant: 'destructive'})
+  }
+}
 
 
   return (
@@ -89,12 +141,12 @@ const uploadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {}
 </div>
     ) : (
       <div className='image_div' onClick={() => imageRef?.current?.click()}
-      onChange={(e) => uploadImage(e)}
       >
         <Input 
         type='file'
         className='hidden'
         ref={imageRef}
+        onChange={(e) => uploadImage(e)}
         />
         {!isImageLoading ? (
           <Image 
