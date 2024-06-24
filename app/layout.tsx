@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: "Vodcastr",
   description: "Generate your podcasts using AI",
   icons: {
-    icon:'/icons/logo.svg'
+    icon: '/icons/logo.svg'
   }
 };
 
@@ -22,9 +22,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <ConvexClerkProvider>
-        {children}
+          {children}
         </ConvexClerkProvider>
-        </body>
+      </body>
     </html>
   );
 }
