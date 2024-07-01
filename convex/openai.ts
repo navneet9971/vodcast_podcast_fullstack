@@ -19,7 +19,7 @@ export const generateAudioAction = action({
     });
 
     const buffer = await mp3.arrayBuffer();
-    
+
     return buffer;
   },
 });
@@ -37,7 +37,7 @@ export const generateThumbnailAction = action({
 
     const url = response.data[0].url;
 
-    if(!url) {
+    if (!url) {
       throw new Error('Error generating thumbnail');
     }
 
